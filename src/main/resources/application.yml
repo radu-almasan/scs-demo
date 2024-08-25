@@ -1,3 +1,7 @@
 spring:
   application:
     name: scs
+
+  cloud:
+    function:
+      definition: randomSource|processor|consoleLog
