@@ -1,5 +1,11 @@
 # Spring Cloud Streams Demo
 
+## Build
+
+```shell
+docker compose -p scs -f src/docker-compose/app.yml up -d 
+```
+
 ## Play
 
 Listen to the `output` topic:

@@ -2,8 +2,8 @@ spring:
   cloud:
     stream:
       bindings:
-        processor-in-0:
+        consumer-in-0:
           destination: input
-          group: processor
-        processor-out-0:
-          destination: output
+          group: consumer
+  kafka:
+    bootstrap-servers: kafka:9092
