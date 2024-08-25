@@ -30,13 +30,12 @@ public class ScsApplication {
     }
 
     @Bean
-    public Function<
-            Tuple2<Flux<Integer>, Flux<Integer>>,
+    public Function<Flux<String>,
             Tuple2<Flux<ObjectNode>, Flux<Message<Object>>>> processor() {
         return input -> {
             Sinks.Many<Message<Object>> errors = Sinks.many().unicast().onBackpressureBuffer();
 
-            var work = Flux.zip(input.getT1(), input.getT2())
+            var work = input
                     .map(nodeService::newNode)
                     .onErrorContinue((t, o) -> {
                         var message = MessageBuilder.withPayload(o)

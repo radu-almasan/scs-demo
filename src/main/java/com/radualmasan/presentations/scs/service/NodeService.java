@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import reactor.util.function.Tuple2;
 
 @Service
 @RequiredArgsConstructor
@@ -12,10 +11,9 @@ public class NodeService {
 
     private final ObjectMapper objectMapper;
 
-    public ObjectNode newNode(Tuple2<Integer, Integer> tuple) {
+    public ObjectNode newNode(String input) {
         var node = objectMapper.createObjectNode();
-        node.put("value1", tuple.getT1());
-        node.put("value2", tuple.getT2());
+        node.put("value", input);
         return node;
     }
 

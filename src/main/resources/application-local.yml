@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        processor-in-0:
+          destination: input
+          group: processor
+        processor-out-0:
+          destination: output
