@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
     id 'io.freefair.lombok' version "8.6"
+    id 'maven-publish'
 }
 
 group = 'com.radualmasan.presentations'
@@ -10,7 +11,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(22)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -44,3 +45,22 @@ tasks.named('test') {
     jvmArgs = ['-XX:+EnableDynamicAgentLoading']
     useJUnitPlatform()
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+
+            artifact tasks.named('bootJar')
+
+            versionMapping {
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+        }
+    }
+}
+
