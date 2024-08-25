@@ -1,0 +1,4 @@
+spring:
+  integration:
+    poller:
+      fixed-delay: PT0.1S
