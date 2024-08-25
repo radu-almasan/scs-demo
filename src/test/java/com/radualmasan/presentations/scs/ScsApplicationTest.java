@@ -7,17 +7,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
+import reactor.util.function.Tuples;
 
-import java.time.Duration;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class, OutputCaptureExtension.class})
 class ScsApplicationTest {
@@ -28,34 +23,18 @@ class ScsApplicationTest {
     private ScsApplication app;
 
     @Test
-    void shouldSupplyRandomNumber() {
-        when(appProperties.producer().interval()).thenReturn(Duration.ofSeconds(1));
-        var source = app.randomSource(appProperties);
-        StepVerifier.create(source.get())
-                .expectNextCount(1)
-                .thenCancel()
-                .verify();
-    }
-
-    @Test
     void shouldWrapValue() {
         var objectMapper = new ObjectMapper();
         var processor = app.processor(objectMapper);
-        var input = Flux.just(1);
-        StepVerifier.create(processor.apply(input))
-                .expectNextMatches(node -> (node.at("/value").intValue() == 1))
+
+        var input1 = Flux.just(1, 2, 3);
+        var input2 = Flux.just(1, 2, 3);
+
+        StepVerifier.create(processor.apply(Tuples.of(input1, input2)))
+                .expectNextMatches(node -> node.at("/value1").intValue() == 1 && node.at("/value2").intValue() == 1)
+                .expectNextMatches(node -> node.at("/value1").intValue() == 2 && node.at("/value2").intValue() == 2)
+                .expectNextMatches(node -> node.at("/value1").intValue() == 3 && node.at("/value2").intValue() == 3)
                 .verifyComplete();
     }
 
-    @Test
-    void shouldOutput(CapturedOutput output) {
-        var objectMapper = new ObjectMapper();
-        var sink = app.consoleLog();
-        var node = objectMapper.createObjectNode();
-        node.put("value", 1);
-
-        sink.accept(Flux.just(node));
-        assertThat(output.getAll(), containsString(node.toString()));
-    }
-    
 }

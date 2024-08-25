@@ -32,11 +32,15 @@ class SCSApplicationIT {
     @Test
     void shouldProcessMessage() throws IOException {
         inputDestination.send(MessageBuilder.withPayload(1).build(), "processor-in-0");
+        inputDestination.send(MessageBuilder.withPayload(1).build(), "processor-in-1");
+
         var message = outputDestination.receive(1000, "processor-out-0");
+
         assertThat(message, is(not(nullValue())));
         var node = objectMapper.readValue(message.getPayload(), ObjectNode.class);
         assertThat(node, is(not(nullValue())));
-        assertThat(node.at("/value").intValue(), is(1));
+        assertThat(node.at("/value1").intValue(), is(1));
+        assertThat(node.at("/value2").intValue(), is(1));
     }
 
 }
